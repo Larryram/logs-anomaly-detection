@@ -83,13 +83,13 @@ def generate_logs_dataset(
     
     with open(logs_dataset_file_name,"w") as file:
         
-        file.write("timestamp,use_ip,method,status_code,end_point,response_time\n")
+        file.write("timestamp,user_ip,method,status_code,end_point,response_time\n")
 
         for i in range(nb_logs):
             timestamp = timestamps[i]
             user_ip = fak.ipv4()
             method = random.choice(http_methods)
-            status_code = random.choices(http_normal_code)
+            status_code = random.choice(http_normal_code)
             end_point= random.choice(api_endpoints)
             response_time = random.randint(0,300)
 
@@ -122,8 +122,6 @@ if __name__ == "__main__":
         http_normal_code= Constant.HTTP_NORMAL_CODES,
         http_error_code= Constant.HTTP_ERROR_CODES,
         http_error_list=list(Constant.HTTP_ERROR_CODES.keys()),
-        api_endpoints= Constant.API_ENDPOINTS, 
+        api_endpoints= Constant.API_ENDPOINTS,
         logs_dataset_file_name= Constant.LOGS_DATA_FILE_NAME
-
-        
     )
