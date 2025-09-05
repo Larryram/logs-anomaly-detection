@@ -17,3 +17,9 @@ class Constant:
     MAX_NUMBER_OF_ANOMALY_PER_INTERVAL:int=1000
     NUMBER_OF_ANOMAMLY_IPS:int=15
     LOGS_DATA_FILE_NAME:str="data/logs_dataset.csv"
+
+    TRAIN_SET_RATION:float = 0.85
+    TEST_SET_RATION:float = 0.25
+
+    ISOLATION_FOREST_MODEL_FILE_NAME = "models/isolation_forest.joblib" 
+    ONE_CLASS_SVM_MODEL_FILE_NAME = "models/one_class_svm.joblib"

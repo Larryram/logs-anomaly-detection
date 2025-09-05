@@ -1,7 +1,11 @@
+import os
+import sys
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
+from constant import Constant
+sys.path.append(os.getcwd())
 
 class LogPreprocessor:
     def __init__(self):
@@ -18,7 +22,7 @@ class LogPreprocessor:
 
         user_stats  = df.groupby('user_ip',as_index=False).agg(
              error_count=("status_code", lambda x: (x.str.startswith('5') | x.str.startswith('4')).sum()),
-            unique_error_type=("status_code", lambda x: x[x.str.startswith('5') | x.str.startswith('4')].unique()),
+            unique_error_type=("status_code", lambda x: x[x.str.startswith('5') | x.str.startswith('4')].nunique()),
             avg_response_time=("response_time", "mean"),
             max_response_time=("response_time", "max")
         ).reset_index()
@@ -79,6 +83,19 @@ class LogPreprocessor:
         X = df_parse.drop(['timestamp','status_code','user_ip'],axis=1)
         x_preprocessed = self.preprocessor.fit_transform(X)
         return x_preprocessed, X
+    
+    def split_dataset(self,df: pd.DataFrame)->tuple[pd.DataFrame,pd.DataFrame]:
+        """
+            Split dataset into 2 sets: Train and Test
+        """
+
+        df = df.sample(n = len(df))
+        train_set_size = int(Constant.TRAIN_SET_RATION * len(df))
+        df_train = df.iloc[:train_set_size]
+        df_test = df.iloc[train_set_size:]
+        return df_train, df_test
+
+
     
 if __name__ == '__main__':
     df = pd.read_csv('data/logs_dataset.csv')
