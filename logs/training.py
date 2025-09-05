@@ -17,7 +17,10 @@ class AnomalyDetector:
             verbose=True,
             contamination=0.05
         )
-        self.one_svm = OneClassSVM(verbose=True)
+        self.one_svm = OneClassSVM(
+            verbose=True,
+            nu=0.05
+            )
 
     def train_models(self,X:np.ndarray):
         """
@@ -72,6 +75,16 @@ class AnomalyDetector:
         plt.tight_layout()
         plt.show()
 
+        prediction = self.predict(X)
+        outliers_isolation_forest_ration = np.mean(prediction['isolation_forest']==-1)
+        outliers_one_class_svm_ration = np.mean(prediction['one_class_svm']==-1)
+
+
+    
+        print(f"Isolation Forest outliers ratio: {outliers_isolation_forest_ration:.2%}")
+        print(f"One-Class SVM outliers ratio: {outliers_one_class_svm_ration:.2%}")
+
+
 if __name__ == "__main__":
     df = pd.read_csv(Constant.LOGS_DATA_FILE_NAME)
 
@@ -85,8 +98,15 @@ if __name__ == "__main__":
 
     detector = AnomalyDetector()
 
-    print(" Entrainement modèle...")
-    detector.train_models(x_train)
+    if os.path.exists(Constant.ISOLATION_FOREST_MODEL_FILE_NAME) and os.path.exists(Constant.ONE_CLASS_SVM_MODEL_FILE_NAME):
+        print("Evaluation des model de test set")
+        detector.evaluate_models(x_test)
+    else :
+        print(" Entrainement modèle...")
+        detector.train_models(x_train)
+
+        print("Evaluation des model de test set")
+        detector.evaluate_models(x_test)
     
-    print("Evaluation des model de test set")
-    detector.evaluate_models(x_test)
+    #Debogage
+    #predictions = detector.predict(x_test)
